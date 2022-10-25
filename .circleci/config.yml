@@ -213,10 +213,10 @@ jobs:
           command: |
             aws s3 ls s3://${NPS_BUCKET_NAME}/
 
-nrrd-dev-database:
+  nrrd-dev-database:
     machine:
       image: ubuntu-2004:202010-01
-      steps:
+    steps:
       - checkout
       - run:
           name: "Check for database changes"
@@ -369,7 +369,7 @@ nrrd-dev-database:
           command: |
             aws s3 ls s3://${NPS_BUCKET_NAME}/downloads/
 
-    nrrd-preview:
+  nrrd-preview:
     docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
       - image: circleci/node:12.13.0
@@ -393,7 +393,7 @@ nrrd-dev-database:
           aws-access-key-id: NPS_AWS_ACCESS_KEY
           aws-region: NPS_AWS_REGION
           aws-secret-access-key: NPS_AWS_SECRET_ACCESS_KEY
-          from: 's3://${NPS_BUCKET_NAME}/downloads/'
+          from: 's3://$NPS_BUCKET_NAME/downloads/'
           to: static/downloads/
       - run:
           command: |
@@ -415,12 +415,12 @@ nrrd-dev-database:
           command: |
             bash ./.circleci/cleanup-previews.sh
 
-    nrrd-preview-new:
-     docker:
+  nrrd-preview-new:
+    docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
       - image: circleci/node:12.13.0-browsers
-     resource_class: medium+
-     steps:
+    resource_class: medium+
+    steps:
       - checkout
       - restore_cache:
           key: v3-node-modules-{{ checksum "package-lock.json" }}
@@ -454,12 +454,12 @@ nrrd-dev-database:
             cf auth "$DEV_CF_USERNAME" "$DEV_CF_PASSWORD"
             cf target -o "$DEV_CF_ORG" -s "$DEV_CF_SPACE"
             cf push dev-nrrd -f ./manifest.staging.yml
-    dev:
-     docker:
+  dev:
+    docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
       - image: circleci/node:12.13.0-browsers
-     resource_class: medium+
-     steps:
+    resource_class: medium+
+    steps:
       - checkout
       - restore_cache:
           key: v3-node-modules-{{ checksum "package-lock.json" }}
@@ -480,7 +480,7 @@ nrrd-dev-database:
           aws-access-key-id: NPS_AWS_ACCESS_KEY
           aws-region: NPS_AWS_REGION
           aws-secret-access-key: NPS_AWS_SECRET_ACCESS_KEY
-          from: 's3://${NPS_BUCKET_NAME}/downloads/'
+          from: 's3://$NPS_BUCKET_NAME/downloads/'
           to: static/downloads/
       - run:
           name: "list generated downloads"
@@ -503,12 +503,14 @@ nrrd-dev-database:
             cf auth "$DEV_CF_USERNAME" "$DEV_CF_PASSWORD"
             cf target -o "$DEV_CF_ORG" -s "$DEV_CF_SPACE"
             cf push dev-nrrd -f ./manifest.yml
-    deploy:
-     docker:
+
+
+  deploy:
+    docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
       - image: circleci/node:12.13.0-browsers
-     resource_class: medium+
-     steps:
+    resource_class: medium+
+    steps:
       - checkout
       - restore_cache:
           key: v3-node-modules-{{ checksum "package-lock.json" }}
@@ -519,13 +521,13 @@ nrrd-dev-database:
           key: v3-node-modules-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      # - aws-s3/sync:
-      #     arguments: |
-      #     aws-access-key-id: NPS_AWS_ACCESS_KEY
-      #     aws-region: NPS_AWS_REGION
-      #     aws-secret-access-key: NPS_AWS_SECRET_ACCESS_KEY
-      #     from: 's3://${NPS_BUCKET_NAME}/downloads/'
-      #     to: static/downloads/
+       - aws-s3/sync:
+          arguments: |
+           aws-access-key-id: NPS_AWS_ACCESS_KEY
+           aws-region: NPS_AWS_REGION
+           aws-secret-access-key: NPS_AWS_SECRET_ACCESS_KEY
+           from: 's3://${NPS_BUCKET_NAME}/downloads/'
+           to: static/downloads/
       - run:
           name: "list generated downloads"
           command: |

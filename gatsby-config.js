@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 const fetch = require('isomorphic-fetch')
 const { createHttpLink } = require('apollo-link-http')
 

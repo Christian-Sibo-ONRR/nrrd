@@ -309,7 +309,7 @@ jobs:
           name: "Generate downloads"
           command: |
                 cd database
-                npm install 
+                npm install
                 bash ./src/scripts/downloads.sh
                 node ./src/scripts/downloads.js
       - run:

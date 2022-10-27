@@ -212,6 +212,7 @@ jobs:
           name: "list bucket"
           command: |
             aws s3 ls s3://${NPS_BUCKET_NAME}/
+
   nrrd-dev-database:
     machine:
       image: ubuntu-2004:202010-01
@@ -362,6 +363,7 @@ jobs:
           name: "list bucket"
           command: |
             aws s3 ls s3://${NPS_BUCKET_NAME}/downloads/
+
   nrrd-preview:
     docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
@@ -407,6 +409,7 @@ jobs:
           name: clean up
           command: |
             bash ./.circleci/cleanup-previews.sh
+
   nrrd-preview-new:
     docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
@@ -446,6 +449,7 @@ jobs:
             cf auth "$DEV_CF_USERNAME" "$DEV_CF_PASSWORD"
             cf target -o "$DEV_CF_ORG" -s "$DEV_CF_SPACE"
             cf push dev-nrrd -f ./manifest.staging.yml
+
   dev:
     docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
@@ -485,6 +489,7 @@ jobs:
             cf auth "$DEV_CF_USERNAME" "$DEV_CF_PASSWORD"
             cf target -o "$DEV_CF_ORG" -s "$DEV_CF_SPACE"
             cf push dev-nrrd -f ./manifest.yml
+
   deploy:
     docker:
       # This image has the latest cf-cli as well as zero downtime plugins, if needed.
@@ -525,6 +530,7 @@ jobs:
             cf target -o "$PROD_CF_ORG" -s "$PROD_CF_SPACE"
             bash ./swap.sh
             cf push nrrd -f ./manifest.yml
+
 workflows:
   audits:
     jobs:
@@ -595,6 +601,7 @@ workflows:
           filters:
             branches:
               only: dev
+
       # - end_to_end_tests:
       #     requires:
       #       - dev
